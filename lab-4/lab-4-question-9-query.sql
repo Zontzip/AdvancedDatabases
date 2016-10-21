@@ -1,3 +1,19 @@
+/* Create temp table and select from that */
+truncate table jobs_person_date;
+drop table jobs_person_date;
+create global temporary table jobs_person_date 
+  on commit preserve rows
+  as  select jp.jobs_id, jp.person_id 
+      from jobs_person jp
+      where jp.start_date> '01-JAN-2003' and jp.end_date < '31-DEC-2003';
+
+select j.salary, j.job_description from jobs;
+
+select p.person_name, j.salary, j.job_description 
+from persons p 
+join jobs_person_date jp on p.person_id = jp.person_id
+join jobs j on jp.jobs_id = j.jobs_id;
+
 /* Delete duplicates, if any */                    
 DELETE FROM 
    jobs_person a
@@ -11,8 +27,8 @@ WHERE  a.rowid > ANY (
 /* select person name, max salary and job description between 2003 and 2004 */
 select p.person_name, j.salary, j.job_description 
 from persons p 
-inner join jobs_person jp on p.person_id = jp.person_id
-inner join jobs j on jp.jobs_id=j.jobs_id
+join jobs_person jp on p.person_id = jp.person_id
+join jobs j on jp.jobs_id=j.jobs_id
 where jp.start_date> '01-JAN-2003' and jp.end_date < '31-DEC-2003';
 
 /* Create indexes */
