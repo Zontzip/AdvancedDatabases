@@ -1,4 +1,9 @@
 /* Original query */
+select p.person_name, j.salary, j.job_description 
+from persons p 
+join jobs_person jp on p.person_id = jp.person_id
+join jobs j on jp.jobs_id=j.jobs_id
+where jp.start_date> '01-JAN-2003' and jp.end_date < '31-DEC-2003';
 
 /* Create temp table with indexes and select from that */
 truncate table jobs_person_date;
