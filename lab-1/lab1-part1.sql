@@ -32,5 +32,3 @@ join toy_attribute
 on toy.id = toy_attribute.toy_id
 where name = 'teddy'
 and toy_attribute.toy_id = 2;
-
-

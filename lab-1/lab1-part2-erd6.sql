@@ -20,8 +20,8 @@ create table city (
 );
 
 create table capital (
-  city_id number(8),
-  country varchar2(30) not null unique,
+  city_id number(8) unique,
+  country varchar2(30) unique,
   province varchar2(30),
   constraint fk_capital_city_id foreign key (city_id) references city(id),
   constraint fk_capital_country foreign key (country) references country(name),

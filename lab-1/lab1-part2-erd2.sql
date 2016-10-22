@@ -24,15 +24,17 @@ create table loan (
   date_returned date, 
   constraint fk_loan_book_isbn foreign key (book_ISBN) references book(ISBN),
   constraint fk_loan_membership_id foreign key (membership_id) references membership(id),
-  primary key (book_ISBN, membership_id, date_borrowed)
+  primary key (book_ISBN, date_borrowed)
 );
 
 insert into book values ('ABC123D', 'Harry Potter is a Rotter');
 insert into book values ('ABC123F', 'Harry Potter returns to hogwarts');
 
 insert into membership values (1234, 'Alex Kiernan');
+insert into membership values (1235, 'Alex Kiernan');
 
 insert into loan values ('ABC123D', 1234, '12-JUL-2016', '14-AUG-2016');
 insert into loan values ('ABC123F', 1234, '14-JUL-2016', '16-AUG-2016');
+insert into loan values ('ABC123D', 1235, '13-JUL-2016', '14-AUG-2016');
 
 select * from loan;
