@@ -29,7 +29,14 @@ insert into stage_teams (source_db, team_name, team_id)
 select 2, team_name, team_id from team2;
 
 /* Insert from DB 1 */
-
+insert into dim_teams (team_sk, team_name)
+  select st.team_sk, st.team_name 
+  from stage_teams st
+  where not exists (
+    select team_name
+    from dim_teams dt
+    where dt.team_name = st.team_name)
+  and source_db = 1; 
 
 /* Insert from DB 2 */
 insert into dim_teams (team_sk, team_name)
@@ -38,7 +45,8 @@ insert into dim_teams (team_sk, team_name)
   where not exists (
     select team_name
     from dim_teams dt
-    where dt.team_name = st.team_name); 
+    where dt.team_name = st.team_name)
+and source_db = 2; 
 
 /* ETL players dimension */
 drop table stage_players cascade constraints purge;
@@ -74,6 +82,26 @@ select 2, p_id, p_name, p_sname, team_id from players2;
 
 select * from stage_players;
 
+/* Insert from DB 1 */
+insert into dim_players (player_sk, player_name)
+  select sp.player_sk, sp.player_fname || ' ' || sp.player_sname  
+  from stage_players sp
+  where not exists (
+    select player_name
+    from dim_players dp
+    where dp.player_name = sp.player_fname || ' ' || sp.player_sname )
+  and source_db = 1; 
+
+/* Insert from DB 2 */
+insert into dim_players (player_sk, player_name)
+  select sp.player_sk, sp.player_fname || ' ' || sp.player_sname  
+  from stage_players sp
+  where not exists (
+    select player_name
+    from dim_players dp
+    where dp.player_name = sp.player_fname || ' ' || sp.player_sname )
+  and source_db = 2; 
+
 /* ETL tournament dimension */
 drop table stage_tournaments cascade constraints purge;
 
@@ -97,7 +125,7 @@ create trigger stage_tournament_trigger
 before insert on stage_tournaments
 for each row
 begin
-select stage_tournament_seq.nextval into :new.tournament_sk from dual;
+select stage_tournament_seq.nextval into :new.tour_sk from dual;
 end;
 
 insert into stage_tournaments (source_db, tour_id, tour_desc, tour_date, tour_prize)
