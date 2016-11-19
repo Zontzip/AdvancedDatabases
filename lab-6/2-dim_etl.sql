@@ -4,7 +4,8 @@ drop table stage_teams cascade constraints purge;
 create table stage_teams (
   team_sk integer,
   source_db integer,
-  team_name varchar(100)
+  team_name varchar(100),
+  team_id integer
 );
 
 drop sequence stage_team_seq;
@@ -21,11 +22,23 @@ begin
 select stage_team_seq.nextval into :new.team_sk from dual;
 end;
 
-insert into stage_teams (source_db, team_name)
-select 1, team_name from team1;
+insert into stage_teams (source_db, team_name, team_id)
+select 1, team_name, team_id from team1;
 
-insert into stage_teams (source_db, team_name)
-select 2, team_name from team2;
+insert into stage_teams (source_db, team_name, team_id)
+select 2, team_name, team_id from team2;
+
+/* Insert from DB 1 */
+
+
+/* Insert from DB 2 */
+insert into dim_teams (team_sk, team_name)
+  select st.team_sk, st.team_name 
+  from stage_teams st
+  where not exists (
+    select team_name
+    from dim_teams dt
+    where dt.team_name = st.team_name); 
 
 /* ETL players dimension */
 drop table stage_players cascade constraints purge;
@@ -62,4 +75,64 @@ select 2, p_id, p_name, p_sname, team_id from players2;
 select * from stage_players;
 
 /* ETL tournament dimension */
+drop table stage_tournaments cascade constraints purge;
 
+create table stage_tournaments (
+  tour_sk integer,
+  source_db integer,
+  tour_id integer,
+  tour_desc varchar(100),
+  tour_date date,
+  tour_prize float
+);
+
+drop sequence stage_tournament_seq;
+
+create sequence stage_tournament_seq
+start with 1
+increment by 1
+nomaxvalue;
+
+create trigger stage_tournament_trigger 
+before insert on stage_tournaments
+for each row
+begin
+select stage_tournament_seq.nextval into :new.tournament_sk from dual;
+end;
+
+insert into stage_tournaments (source_db, tour_id, tour_desc, tour_date, tour_prize)
+select 1, t_id, t_descriprion, t_date, total_price from tournament1;
+
+insert into stage_tournaments (source_db, tour_id, tour_desc, tour_date, tour_prize)
+select 2, t_id, t_descriprion, t_date, total_price from tournament2;
+
+/* ETL date sk */
+drop table stage_dates cascade constraints purge;
+
+create table stage_tournaments (
+  tour_sk integer,
+  source_db integer,
+  tour_id integer,
+  tour_desc varchar(100),
+  tour_prize float
+);
+
+drop sequence stage_tournament_seq;
+
+create sequence stage_tournament_seq
+start with 1
+increment by 1
+nomaxvalue;
+
+create trigger stage_tournament_trigger 
+before insert on stage_tournaments
+for each row
+begin
+select stage_tournament_seq.nextval into :new.tournament_sk from dual;
+end;
+
+insert into stage_tournaments (source_db, tour_id, tour_desc, tour_prize)
+select 1, t_id, t_descriprion, t_date, total_price from tournament1;
+
+insert into stage_tournaments (source_db, tour_id, tour_desc, tour_prize)
+select 2, t_id, t_descriprion, t_date, total_price from tournament2;
