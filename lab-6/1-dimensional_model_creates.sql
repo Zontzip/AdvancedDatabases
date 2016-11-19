@@ -12,7 +12,7 @@ create table dim_players (
 create table dim_tournaments (
   tournament_sk integer primary key,
   tournament_desc varchar(100),
-  total_price float
+  total_prize float
 );
 
 create table dim_teams (
@@ -36,7 +36,7 @@ create table fact_results (
   team_sk integer,
   date_sk integer,
   f_rank integer,
-  f_price float,
+  f_prize float,
   constraint player_fk foreign key (player_sk) references dim_players(player_sk),
   constraint tour_fk foreign key (tournament_sk) references dim_tournaments(tournament_sk),
   constraint team_fk foreign key (team_sk) references dim_teams(team_sk),
