@@ -140,6 +140,10 @@ insert into stage_tournaments (source_db, tour_id, tour_desc, tour_date,
 tour_prize)
 select 2, t_id, t_descriprion, t_date, total_price from tournament2;
 
+update stage_tournaments
+set tour_prize = (tour_prize * 0.7)
+where source_db = 2;
+
 insert into dim_tournaments (tournament_sk, tournament_desc, total_prize)
   select tour_sk, tour_desc, tour_prize
   from stage_tournaments;
@@ -204,16 +208,25 @@ create table stage_facts (
   f_prize float,
   player_id integer,
   tour_id integer,
+  team_id integer,
   source_db integer
 );
 
-insert into stage_facts (f_rank, f_prize, player_id, tour_id, source_db)
-  select rank, price, p_id, t_id, 1
-  from results1;
+insert into stage_facts (f_rank, f_prize, player_id, tour_id, team_id, source_db)
+  select r1.rank, r1.price, r1.p_id, r1.t_id, t1.team_id, 1
+  from results1 r1
+  join players1 p1 on p1.p_id = r1.p_id
+  join team1 t1 on t1.team_id = p1.team_id;
 
-insert into stage_facts (f_rank, f_prize, player_id, tour_id, source_db)
-  select rank, price, p_id, t_id, 2
-  from results2;
+insert into stage_facts (f_rank, f_prize, player_id, tour_id, team_id, source_db)
+  select r2.rank, r2.price, r2.p_id, r2.t_id, t2.team_id, 2
+  from results2 r2
+  join players2 p2 on p2.p_id = r2.p_id
+  join team2 t2 on t2.team_id = p2.team_id;
+
+update stage_facts
+set f_prize = (f_prize * 0.7)
+where source_db = 2;
   
 /* Assign the surrogate keys */
 /* Player SK */
@@ -235,7 +248,11 @@ set tournament_sk = (
 /* Team SK */
 update stage_facts sf
 set team_sk = (
-  select team_sk 
+  select team_sk
   from stage_teams st
   where st.source_db = sf.source_db 
-  and st.team_id = sf.team_id);
+  and st.team_id = sf.team_id
+);
+
+/* Date SK */
+
