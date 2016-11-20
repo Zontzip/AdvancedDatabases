@@ -185,4 +185,57 @@ select  2,
         cast(to_char(t_date,'Q') as integer),
         cast(to_char(t_date,'D') as integer)
 from tournament1;
+
+insert into dim_dates(date_sk, d_day, d_month, d_year, d_week, d_quarter, 
+d_dayofweek)
+  select date_sk, d_day, d_month, d_year, d_week, d_quarter, d_dayofweek
+  from stage_dates;
 -- End date ETL 
+
+/* Facts */
+drop table stage_facts cascade constraints purge;
+
+create table stage_facts (
+  player_sk integer,
+  tournament_sk integer,
+  team_sk integer,
+  date_sk integer,
+  f_rank integer,
+  f_prize float,
+  player_id integer,
+  tour_id integer,
+  source_db integer
+);
+
+insert into stage_facts (f_rank, f_prize, player_id, tour_id, source_db)
+  select rank, price, p_id, t_id, 1
+  from results1;
+
+insert into stage_facts (f_rank, f_prize, player_id, tour_id, source_db)
+  select rank, price, p_id, t_id, 2
+  from results2;
+  
+/* Assign the surrogate keys */
+/* Player SK */
+update stage_facts sf
+set player_sk = (
+  select player_sk 
+  from stage_players sp
+  where sp.source_db = sf.source_db 
+  and sp.player_id = sf.player_id);
+
+/* Tournament SK */
+update stage_facts sf
+set tournament_sk = (
+  select tour_sk 
+  from stage_tournaments st
+  where st.source_db = sf.source_db 
+  and st.tour_id = sf.tour_id);
+  
+/* Team SK */
+update stage_facts sf
+set team_sk = (
+  select team_sk 
+  from stage_teams st
+  where st.source_db = sf.source_db 
+  and st.team_id = sf.team_id);
