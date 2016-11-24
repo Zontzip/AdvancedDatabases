@@ -26,9 +26,9 @@ insert into dim_teams (team_sk, team_name)
     from dim_teams dt
     where dt.team_name = st.team_name)
 and source_db = 2; 
--- End team inserts
-
--- Start player inserts
+/*************************
+ * Start player inserts
+ ************************/
 insert into stage_players (source_db, player_id, player_fname, player_sname, 
 team_id)
 select 1, p_id, p_name, p_sname, team_id from players1;
