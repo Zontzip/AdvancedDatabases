@@ -1,4 +1,4 @@
-db.results.insert({
+db.C13451458_schema.insert({
   "name": "Mary",
   "surname": "Murray",
   "nationality": "Irish",
@@ -14,7 +14,7 @@ db.results.insert({
     {"name": "Programming", "mark": 45, "date": "02/07/2014"}
   ]
 });
-db.results.insert({
+db.C13451458_schema.insert({
   "name": "Bill",
   "surname": "Bellichick",
   "nationality": "American",
@@ -30,7 +30,7 @@ db.results.insert({
     {"name": "Programming", "mark": 45, "date": "10/10/2011"}
   ]
 });
-db.results.insert({
+db.C13451458_schema.insert({
   "name": "Tom",
   "surname": "Brady",
   "nationality": "Canadian",
@@ -44,7 +44,7 @@ db.results.insert({
     {"name": "Maths", "mark": 56, "date": "02/07/2014"}
   ]
 });
-db.results.insert({
+db.C13451458_schema.insert({
   "name": "John",
   "surname": "Bale",
   "nationality": "English",
