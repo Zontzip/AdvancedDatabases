@@ -131,3 +131,11 @@ db.teams.update(
     }
   }
 );
+
+// 3 - Find the oldest team
+db.teams.find()
+  .limit(1)
+  .sort({
+    date_founded : 1
+  })
+  .pretty();
