@@ -11,7 +11,7 @@ db.C13451458_schema.find(
   },
   {
     "name" : 1,
-    "surname": 1
+    "surname" : 1
   }
 );
 
@@ -22,7 +22,7 @@ db.C13451458_schema.aggregate(
       $unwind : "$results"
     },
     {
-      $match:
+      $match :
       {
         "results.mark" : {
           $gte : 40
@@ -31,9 +31,9 @@ db.C13451458_schema.aggregate(
     },
     {
       $group : {
-        _id: "$results.name",
+        "_id" : "$results.name",
         total : {
-          $sum: 1
+          $sum : 1
         }
       }
     }
@@ -48,7 +48,7 @@ db.C13451458_schema.aggregate(
     },
     {
       $group : {
-        _id: "$name",
+        "_id" : "$name",
         averageGrade : {
           $avg : "$results.mark"
         }
