@@ -101,12 +101,14 @@ db.teams.insert({
 db.teams.insert({
 	team_id: "ita4",
 	date_founded: new Date("Oct 04, 1902"),
-     league: "Serie A",
-	 points: 71,
-	 name: "Inter Milan",
-     players: [ { p_id: "Handanovic", goal: 0, caps: 51, age: 29 },
-              { p_id: "Cambiasso", goal: 35, caps: 176, age: 35 },
-			  { p_id: "Palacio", goal: 78, caps: 75, age: 31 } ]
+  league: "Serie A",
+  points: 71,
+  name: "Inter Milan",
+  players: [
+      { p_id: "Handanovic", goal: 0, caps: 51, age: 29 },
+      { p_id: "Cambiasso", goal: 35, caps: 176, age: 35 },
+      { p_id: "Palacio", goal: 78, caps: 75, age: 31 }
+    ]
 	 });
 
 // 2 - Insert two new players to man utd and ac milan
@@ -139,3 +141,18 @@ db.teams.find()
     date_founded : 1
   })
   .pretty();
+
+// 4 - Update the number of goals of all the Real Madrid Players by 3 goals each
+db.teams.find({team_id : "spa2"}).pretty();
+
+db.teams.update(
+  {team_id : "spa2"},
+  {
+    $inc : {
+      "players.0.goal" : 3,
+      "players.1.goal" : 3,
+      "players.2.goal" : 3,
+      "players.3.goal" : 3
+    }
+  },{multi: true}
+);
