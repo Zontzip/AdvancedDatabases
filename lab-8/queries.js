@@ -251,3 +251,25 @@ db.teams.aggregate(
 		}
 	]
 );
+
+// 10 - Compute the average number of goals per match per player and store the
+// output in a collection named student_id_avg_goals.
+db.teams.aggregate(
+	[
+		{
+			$unwind : "$players"
+		},
+		{
+			$project : {
+				"_id" : 0,
+				"players.p_id" : 1,
+				averageGoals : {
+					$divide : ["$players.goal", "$players.caps"]
+				}
+			}
+		},
+		{
+			$out : "C13451458_avg_goals"
+		}
+	]
+);
