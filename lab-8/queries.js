@@ -273,3 +273,12 @@ db.teams.aggregate(
 		}
 	]
 );
+
+// 11 - Write a js function old_vs_young(x), that receives a positive integer x
+// representing the age of a player and returns 1 if the total number of goals
+// scored by the players with age >= x years is greater than the total number of
+// goals scored by the players with age < x, otherwise it returns 0.
+// The function also prints the number of goals for each group of players
+function old_vs_young(x) {
+	
+}
