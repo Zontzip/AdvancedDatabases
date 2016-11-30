@@ -188,3 +188,28 @@ var arsDocArray = arsCursor.toArray();
 var dataToSet={};
 dataToSet["points"] = barPoints;
 db.teams.update({"_id" : arsDocArray[0]._id}, {$set : dataToSet});
+
+// 7 - Find all the players over 30 years old containing the string "es"
+db.teams.aggregate(
+	[
+		{
+			$unwind : "$players"
+		},
+		{
+			$match :
+			{
+				"players.p_id" : {
+					$regex : /es/g
+				}
+			}
+		},
+		{
+			$match :
+			{
+				"players.age" : {
+					$gte : 30
+				}
+			}
+		}
+	]
+);
