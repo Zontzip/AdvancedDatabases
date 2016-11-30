@@ -1,6 +1,7 @@
 db.teams.drop();
 
-// 1 - create a collections called your_student_id_teams and insert the documents about teams and football players contained in this file
+// 1 - create a collections called your_student_id_teams and insert the
+// documents about teams and football players contained in this file
 db.teams.insert({
 	team_id: "eng1",
 	date_founded: new Date("Oct 04, 1896"),
@@ -166,7 +167,8 @@ for (var i in documentArray) {
   var playerArray = documentArray[i].players;
 
   for (var j in playerArray) {
-    updatedCaps = Math.round(playerArray[j].caps + (playerArray[j].caps * 10/100));
+    updatedCaps = Math.round(playerArray[j].caps + (playerArray[j].caps
+			* 10/100));
 
 		var dataToSet={};
 		dataToSet["players."+j+".caps"] = updatedCaps;
@@ -223,6 +225,28 @@ db.teams.aggregate(
 				totalPoints : {
 					$sum : "$points"
 				}
+			}
+		}
+	]
+);
+
+// 9 - Using aggregation, list all the teams by number of goals in desc order
+db.teams.aggregate(
+	[
+		{
+			$unwind : "$players"
+		},
+		{
+			$group : {
+				"_id" : "$name",
+				totalGoals : {
+					$sum : "$players.goal"
+				}
+			}
+		},
+		{
+			$sort : {
+				totalGoals : -1
 			}
 		}
 	]
