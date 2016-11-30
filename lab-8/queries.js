@@ -213,3 +213,17 @@ db.teams.aggregate(
 		}
 	]
 );
+
+// 8 - Using aggregate mongoDB operator, list the total points by league
+db.teams.aggregate(
+	[
+		{
+			$group : {
+				"_id" : "$league",
+				totalPoints : {
+					$sum : "$points"
+				}
+			}
+		}
+	]
+);
