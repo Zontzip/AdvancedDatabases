@@ -1,3 +1,5 @@
+db.teams.drop();
+
 // 1 - create a collections called your_student_id_teams and insert the documents about teams and football players contained in this file
 db.teams.insert({
 	team_id: "eng1",
@@ -135,12 +137,9 @@ db.teams.update(
 );
 
 // 3 - Find the oldest team
-db.teams.find()
-  .limit(1)
-  .sort({
+db.teams.find().limit(1).sort({
     date_founded : 1
-  })
-  .pretty();
+  }).pretty();
 
 // 4 - Update the number of goals of all the Real Madrid Players by 3 goals each
 db.teams.find({team_id : "spa2"}).pretty();
@@ -154,5 +153,25 @@ db.teams.update(
       "players.2.goal" : 3,
       "players.3.goal" : 3
     }
-  },{multi: true}
+  }
 );
+
+// 5 - Using a cursor, update the number of caps of all the "Serie A" teams
+// by incrementing them by 10% (round it!)
+var myCursor = db.teams.find({league: "Serie A"});
+
+var documentArray = myCursor.toArray();
+
+for (var i in documentArray) {
+  var playerArray = documentArray[i].players;
+
+  for (var j in playerArray) {
+    updatedCaps = Math.round(playerArray[j].caps + (playerArray[j].caps * 10/100));
+
+		var dataToSet={};
+		dataToSet["players."+j+".caps"]= updatedCaps;
+
+		db.teams.update({"_id" : documentArray[i]._id}, {$set : dataToSet});
+		printjson(updatedCaps);
+  }
+}
