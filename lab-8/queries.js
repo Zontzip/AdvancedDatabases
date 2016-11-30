@@ -169,9 +169,22 @@ for (var i in documentArray) {
     updatedCaps = Math.round(playerArray[j].caps + (playerArray[j].caps * 10/100));
 
 		var dataToSet={};
-		dataToSet["players."+j+".caps"]= updatedCaps;
+		dataToSet["players."+j+".caps"] = updatedCaps;
 
 		db.teams.update({"_id" : documentArray[i]._id}, {$set : dataToSet});
 		printjson(updatedCaps);
   }
-}
+};
+
+// 6 - Update the points of Arsenal to be equal to the points of Barcelona
+var barCursor = db.teams.find({team_id: "spa1"}, {points : 1});
+var barDocArray = barCursor.toArray();
+var barPoints = barDocArray[0].points;
+print(barPoints);
+
+var arsCursor = db.teams.find({team_id: "eng2"}, {points : 1});
+var arsDocArray = arsCursor.toArray();
+
+var dataToSet={};
+dataToSet["points"] = barPoints;
+db.teams.update({"_id" : arsDocArray[0]._id}, {$set : dataToSet});
