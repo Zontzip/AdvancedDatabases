@@ -71,3 +71,79 @@ d_dayofweek)
                     from dim_dates dd
                     where dd.date_sk = sd.date_sk
 );
+
+/* Insert result data */
+insert into stage_facts (f_rank, f_prize, player_id, tour_id, team_id, 
+tour_date, source_db)
+  select r1.rank, r1.price, r1.p_id, r1.t_id, t1.team_id, tn1.t_date, 1
+  from results1 r1
+  join players1 p1 on p1.p_id = r1.p_id
+  join team1 t1 on t1.team_id = p1.team_id
+  join tournament1 tn1 on tn1.t_id = r1.t_id
+where not exists (
+  select *
+  from stage_facts sf
+  where sf.player_id = r1.p_id
+  and sf.tour_id = r1.t_id
+  and sf.team_id = t1.team_id
+);
+
+/* Set surrogate keys */
+update stage_facts sf
+set player_sk = (
+  select player_sk 
+  from stage_players sp
+  where sp.source_db = sf.source_db 
+  and sp.player_id = sf.player_id);
+
+-- Normalize data
+update stage_facts sf
+set player_sk = 1 
+where player_id = 2
+and source_db = 2;
+
+update stage_facts sf
+set player_sk = 5 
+where player_id = 1
+and source_db = 2;
+
+update stage_facts sf
+set tournament_sk = (
+  select tour_sk 
+  from stage_tournaments st
+  where st.source_db = sf.source_db 
+  and st.tour_id = sf.tour_id);
+
+update stage_facts sf
+set team_sk = (
+  select team_sk
+  from stage_teams st
+  where st.source_db = sf.source_db 
+  and st.team_id = sf.team_id
+);
+
+-- Normalize data
+update stage_facts sf
+set team_sk = 1 
+where team_id = 3
+and source_db = 2;
+
+update stage_facts sf
+set date_sk = (
+  select date_sk
+  from stage_dates sd
+  where sd.source_db = sf.source_db 
+  and sd.tour_date = sf.tour_date
+);
+
+/* Update facts table */
+insert into fact_results(player_sk, tournament_sk, team_sk, date_sk, f_rank, f_prize)
+  select player_sk, tournament_sk, team_sk, date_sk, f_rank, f_prize
+  from stage_facts sf
+where not exists (select *
+                  from fact_results
+                  where fact_results.player_sk = sf.player_sk
+                  and fact_results.tournament_sk = sf.tournament_sk
+                  and fact_results.team_sk = sf.team_sk
+                  and fact_results.date_sk = sf.date_sk
+);
