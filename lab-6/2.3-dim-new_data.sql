@@ -3,7 +3,7 @@
  **********************/
 insert into players1 (p_id, p_name, p_sname, team_id) values (7, 'Alan', 'Parker', 1);
 insert into players1 (p_id, p_name, p_sname, team_id) values (8, 'Martha', 'Bag', 2);
-insert into tournament1 (t_id, t_descriprion, total_price) values (5, 'Saudi Open', 500000);
+insert into tournament1 (t_id, t_descriprion, t_date, total_price) values (5, 'Saudi Open', '01-sep-2014', 500000);
 
 insert into results1 (t_id, p_id, rank, price) values (5, 1, 1, 60000);
 insert into results1 (t_id, p_id, rank, price) values (5, 7, 5, 20000);
@@ -35,4 +35,39 @@ where not exists (select *
                   from stage_tournaments st 
                   where st.tour_id = tournament1.t_id
                   and st.source_db = 1
+);
+
+insert into dim_tournaments (tournament_sk, tournament_desc, total_prize)
+  select tour_sk, tour_desc, tour_prize
+  from stage_tournaments st
+  where not exists (select *
+                    from dim_tournaments dt
+                    where st.tour_sk = dt.tournament_sk
+);
+
+/* Insert date data */
+insert into stage_dates (source_db, d_day, d_month, d_year, d_week, d_quarter, 
+d_dayofweek, tour_date)
+select  1,
+        cast(to_char(t_date,'DD') as integer),
+        cast(to_char(t_date,'MM') as integer),
+        cast(to_char(t_date,'YYYY') as integer),
+        cast(to_char(t_date,'WW') as integer),
+        cast(to_char(t_date,'Q') as integer),
+        cast(to_char(t_date,'D') as integer),
+        t_date
+from tournament1
+where not exists (select *
+                  from stage_dates sd
+                  where sd.tour_date = tournament1.t_date
+                  and sd.source_db = 1
+);
+
+insert into dim_dates(date_sk, d_day, d_month, d_year, d_week, d_quarter, 
+d_dayofweek)
+  select date_sk, d_day, d_month, d_year, d_week, d_quarter, d_dayofweek
+  from stage_dates sd
+  where not exists (select *
+                    from dim_dates dd
+                    where dd.date_sk = sd.date_sk
 );
