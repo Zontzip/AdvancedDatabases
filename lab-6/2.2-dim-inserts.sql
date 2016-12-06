@@ -1,5 +1,5 @@
 /*************************
- * Start teams inserts
+ * Stage teams inserts
  ************************/
 insert into stage_teams (source_db, team_name, team_id)
 select 1, team_name, team_id from team1;
@@ -26,6 +26,7 @@ insert into dim_teams (team_sk, team_name)
     from dim_teams dt
     where dt.team_name = st.team_name)
 and source_db = 2; 
+
 /*************************
  * Start player inserts
  ************************/
@@ -58,7 +59,7 @@ insert into dim_players (player_sk, player_name)
   and source_db = 2; 
 
 /****************************
- * Start tournament inserts
+ * Stage tournament inserts
  ***************************/
 insert into stage_tournaments (source_db, tour_id, tour_desc, tour_date, 
 tour_prize)
@@ -78,7 +79,7 @@ insert into dim_tournaments (tournament_sk, tournament_desc, total_prize)
 -- End tournament inserts  
 
 /****************************
- * Start date inserts
+ * Stage date inserts
  ***************************/
 insert into stage_dates (source_db, d_day, d_month, d_year, d_week, d_quarter, 
 d_dayofweek, tour_date)
@@ -110,7 +111,7 @@ d_dayofweek)
   from stage_dates;
 
 /*************************
- * Start fact inserts
+ * Stage fact inserts
  ************************/
 insert into stage_facts (f_rank, f_prize, player_id, tour_id, team_id, 
 tour_date, source_db)
@@ -141,6 +142,17 @@ set player_sk = (
   where sp.source_db = sf.source_db 
   and sp.player_id = sf.player_id);
 
+-- Normalize data
+update stage_facts sf
+set player_sk = 1 
+where player_id = 2
+and source_db = 2;
+
+update stage_facts sf
+set player_sk = 5 
+where player_id = 1
+and source_db = 2;
+
 /* Tournament SK */
 update stage_facts sf
 set tournament_sk = (
@@ -158,6 +170,12 @@ set team_sk = (
   and st.team_id = sf.team_id
 );
 
+-- Normalize data
+update stage_facts sf
+set team_sk = 1 
+where team_id = 3
+and source_db = 2;
+
 /* Date SK */
 update stage_facts sf
 set date_sk = (
@@ -166,3 +184,7 @@ set date_sk = (
   where sd.source_db = sf.source_db 
   and sd.tour_date = sf.tour_date
 );
+
+insert into fact_results(player_sk, tournament_sk, team_sk, date_sk, f_rank, f_prize)
+  select player_sk, tournament_sk, team_sk, date_sk, f_rank, f_prize
+  from stage_facts;

@@ -8,7 +8,6 @@ drop table team2;
 drop table tournament1;
 drop table tournament2;
 
-
 Create Table Team1(
 Team_id integer primary key,
 Team_name varchar(100)

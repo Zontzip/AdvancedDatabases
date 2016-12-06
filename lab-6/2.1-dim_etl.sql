@@ -1,8 +1,12 @@
+drop table stage_teams cascade constraints purge;
+drop table stage_players cascade constraints purge;
+drop table stage_tournaments cascade constraints purge;
+drop table stage_dates cascade constraints purge;
+drop table stage_facts cascade constraints purge;
+
 /***********************
  * ETL team dimension
  **********************/
-drop table stage_teams cascade constraints purge;
-
 create table stage_teams (
   team_sk integer,
   source_db integer,
@@ -27,8 +31,6 @@ end;
 /*************************
  * ETL players dimension
  ************************/
-drop table stage_players cascade constraints purge;
-
 create table stage_players (
   player_sk integer,
   source_db integer,
@@ -55,8 +57,6 @@ end;
 /****************************
  * ETL tournament dimension
  ***************************/
-drop table stage_tournaments cascade constraints purge;
-
 create table stage_tournaments (
   tour_sk integer,
   source_db integer,
@@ -83,8 +83,6 @@ end;
 /************************
  * ETL date dimension
  ***********************/
-drop table stage_dates cascade constraints purge;
-
 create table stage_dates (
   date_sk integer primary key,
   source_db integer,
@@ -114,8 +112,6 @@ end;
 /****************************
  * ETL facts dimension
  ***************************/
-drop table stage_facts cascade constraints purge;
-
 create table stage_facts (
   player_sk integer,
   tournament_sk integer,
