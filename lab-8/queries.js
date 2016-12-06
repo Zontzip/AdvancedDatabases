@@ -120,7 +120,7 @@ db.teams.update(
   {
     $push : {
       players : {
-        p_id: "Keane", goal: 44, caps: 326, age: 33
+        p_id: "Keane", goal: 33, caps: 326, age: 44
       }
     }
   }
@@ -131,7 +131,7 @@ db.teams.update(
   {
     $push : {
       players : {
-        p_id: "Kaka", goal: 32, caps: 112, age: 53
+        p_id: "Kaka", goal: 53, caps: 112, age: 32
       }
     }
   }
@@ -279,6 +279,6 @@ db.teams.aggregate(
 // scored by the players with age >= x years is greater than the total number of
 // goals scored by the players with age < x, otherwise it returns 0.
 // The function also prints the number of goals for each group of players
-function old_vs_young(x) {
-	
-}
+load("oldyoung.js");
+
+db.eval("old_vs_young(30)")
