@@ -1,6 +1,14 @@
-// 1 - Add a person Tom (age: 28 from: Spain like: football). Make Tom a friend of Mary 
+// 1 - Add a person Tom (age: 28 from: Spain like: football). Make Tom a friend 
+// of Mary 
 CREATE (e17: Person {name: "Tom", country: "Spain", age: 28, sport: "Football"});
 
 MATCH (e1: Person {name: 'Mary'}), (e17: Person {name: 'Tom'})
 CREATE (e17)-[:FRIEND_OF]->(e1);
 
+// 2 - Insert a new person (name: Bill, age: 23, country: Ireland) and make Bill 
+// a friend of Mary and Denis
+CREATE (e18: Person {name: "Bill", country: "Ireland", age: 23});
+
+MATCH (e1: Person {name: 'Mary'}), (e16: Person {name: 'Denis'}), 
+(e18: Person {name: 'Bill'})
+CREATE (e18)-[:FRIEND_OF]->(e1), (e18)-[:FRIEND_OF]->(e16);
