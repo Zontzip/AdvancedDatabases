@@ -13,29 +13,36 @@ CREATE
 (chi: Airport { name: "chicago", country: "usa", code: "ord" }),
 (sao: Airport { name: "sao_paulo", country: "brazil", code: "gru" }),
 (rio: Airport { name: "rio", country: "brazil", code: "gig" }),
-(dub)-[:connected_to{time: 45, price: 150}]->(lon),
-(rom)-[:connected_to{time: 150, price: 400}]->(lon),
-(rom)-[:connected_to{time: 120, price: 500}]->(par),
-(par)-[:connected_to{time: 60, price: 200}]->(dub),
-(ber)-[:connected_to{time: 240, price: 900}]->(mos),
-(par)-[:connected_to{time: 30, price: 100}]->(ams),
-(ber)-[:connected_to{time: 120, price: 900}]->(dub),
-(lon)-[:connected_to{time: 700, price: 1100}]->(nyc),
-(dub)-[:connected_to{time: 360, price: 800}]->(nyc),
-(dub)-[:connected_to{time: 50, price: 50}]->(cor),
-(dub)-[:connected_to{time: 150, price: 70}]->(rom),
-(dub)-[:connected_to{time: 480, price: 890}]->(chi),
-(ams)-[:connected_to{time: 660, price: 750}]->(hon),
-(lon)-[:connected_to{time: 700, price: 1000}]->(hon),
-(dub)-[:connected_to{time: 90, price: 60}]->(ams),
-(mos)-[:connected_to{time: 720, price: 1000}]->(nyc),
-(mos)-[:connected_to{time: 420, price: 500}]->(hon),
-(nyc)-[:connected_to{time: 240, price: 430}]->(chi),
-(dub)-[:connected_to{time: 900, price: 800}]->(sao),
-(sao)-[:connected_to{time: 840, price: 650}]->(nyc),
-(rio)-[:connected_to{time: 1200, price: 1100}]->(ber);
+(dub)-[:connected_to { time: 45, price: 150 }]->(lon),
+(rom)-[:connected_to { time: 150, price: 400 }]->(lon),
+(rom)-[:connected_to { time: 120, price: 500 }]->(par),
+(par)-[:connected_to { time: 60, price: 200 }]->(dub),
+(ber)-[:connected_to { time: 240, price: 900 }]->(mos),
+(par)-[:connected_to { time: 30, price: 100 }]->(ams),
+(ber)-[:connected_to { time: 120, price: 900 }]->(dub),
+(lon)-[:connected_to { time: 700, price: 1100 }]->(nyc),
+(dub)-[:connected_to { time: 360, price: 800 }]->(nyc),
+(dub)-[:connected_to { time: 50, price: 50 }]->(cor),
+(dub)-[:connected_to { time: 150, price: 70 }]->(rom),
+(dub)-[:connected_to { time: 480, price: 890 }]->(chi),
+(ams)-[:connected_to { time: 660, price: 750 }]->(hon),
+(lon)-[:connected_to { time: 700, price: 1000 }]->(hon),
+(dub)-[:connected_to { time: 90, price: 60 }]->(ams),
+(mos)-[:connected_to { time: 720, price: 1000 }]->(nyc),
+(mos)-[:connected_to { time: 420, price: 500 }]->(hon),
+(nyc)-[:connected_to { time: 240, price: 430 }]->(chi),
+(dub)-[:connected_to { time: 900, price: 800 }]->(sao),
+(sao)-[:connected_to { time: 840, price: 650 }]->(nyc),
+(rio)-[:connected_to { time: 1200, price: 1100 }]->(ber);
 
 // Queries
 
 // Test
 MATCH (a: Airport) return a;
+
+// 1 - Find the total time from Moscow to Rio. Show also the path.
+MATCH path = (a1: Airport {name:"moscow"})-[:connected_to*..10]-
+(a2: Airport{name:"rio"})
+RETURN path, REDUCE (tot = 0, n IN relationships(path) | tot + n.time)
+AS tottime
+ORDER BY tottime ASC;
