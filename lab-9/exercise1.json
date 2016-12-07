@@ -1,3 +1,6 @@
+// Test
+MATCH (p: Person) return p;
+
 // 1 - Add a person Tom (age: 28 from: Spain like: football). Make Tom a friend 
 // of Mary 
 CREATE (e17: Person {name: "Tom", country: "Spain", age: 28, sport: "Football"});
@@ -25,10 +28,62 @@ RETURN p2.name, p2.age;
 // 4 - Show all the people from Scotland
 MATCH (p1: Person)
 WHERE p1.country = "Scotland"
-RETURN p1.name, p1.country;
+RETURN p1;
 
 // 5 - Show all the person with age less or equal than 20 from Ireland
 MATCH (p1: Person)
 WHERE p1.age <= 20
 AND p1.country = "Ireland"
-RETURN p1.name, p1.country;
+RETURN p1;
+
+// 6 - Show all the person with age less or equal 30 playing football
+MATCH (p1: Person)
+WHERE p1.age <= 30
+AND p1.sport = "Football"
+RETURN p1;
+
+// 7 - Count the person by country
+MATCH (p1: Person)
+RETURN p1.country, COUNT(p1.country);
+
+// 8 - Show the average age of people group by sport
+MATCH (p1: Person)
+WHERE p1.sport IS NOT NULL
+RETURN p1.sport, AVG(p1.age) as averageage;
+
+// 9 - Show all the direct friends of Mary
+MATCH (p1: Person)-[:FRIEND_OF]->(p2: Person)
+WHERE p1.name = "Mary"
+RETURN p2;
+
+// 10 - Show all the friends of Paul with a maximum distance of 5 steps
+MATCH (p1: Person)-[:FRIEND_OF*1..5]-(p2: Person)
+WHERE p1.name = "Paul"
+RETURN p2;
+
+// 11 - Count all the friends of Paul with maximum distance 5 steps by 
+// nationality
+MATCH (p1: Person)-[:FRIEND_OF*1..5]-(p2: Person)
+WHERE p1.name = "Paul"
+RETURN p2.country, COUNT(p2) as numfriends;
+
+// 12 - Show the path(s) between Paul and Lisa. For each path show the length. 
+// How many paths are there?
+// There are 447 paths
+MATCH path = (p1: Person)-[:FRIEND_OF*1..5]->(p2: Person)
+WHERE p1.name = "Paul"
+AND p2.name = "Lisa"
+RETURN path, LENGTH(path);
+
+// 13 - Show the shortest path between Paul and Lisa.
+MATCH path = shortestPath((p1: Person)-[:FRIEND_OF*1..5]-(p2: Person))
+WHERE p1.name = "Paul"
+AND p2.name = "Lisa"
+RETURN path, LENGTH(path);
+
+// 14 - Show (if exists) a connection between Mary and all her friends, where 
+// the path can only contain people that play football
+MATCH path = (p1: Person)-[r:FRIEND_OF]-(p2: Person)
+WHERE p1.name = "Mary" 
+AND ALL(x in nodes(path) WHERE x.sport = "Football")
+RETURN path, LENGTH(path);
