@@ -1,0 +1,6 @@
+// 1 - Add a person Tom (age: 28 from: Spain like: football). Make Tom a friend of Mary 
+CREATE (e17: Person {name: "Tom", country: "Spain", age: 28, sport: "Football"});
+
+MATCH (e1: Person {name: 'Mary'}), (e17: Person {name: 'Tom'})
+CREATE (e17)-[:FRIEND_OF]->(e1);
+
