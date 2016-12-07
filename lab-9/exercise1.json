@@ -12,3 +12,23 @@ CREATE (e18: Person {name: "Bill", country: "Ireland", age: 23});
 MATCH (e1: Person {name: 'Mary'}), (e16: Person {name: 'Denis'}), 
 (e18: Person {name: 'Bill'})
 CREATE (e18)-[:FRIEND_OF]->(e1), (e18)-[:FRIEND_OF]->(e16);
+
+// 3 - Show the age of Denis and his friends
+MATCH (p1: Person)
+WHERE p1.name = "Denis"
+RETURN p1.name, p1.age;
+
+MATCH (p1: Person)-[:FRIEND_OF]->(p2: Person)
+WHERE p1.name = "Denis"
+RETURN p2.name, p2.age;
+
+// 4 - Show all the people from Scotland
+MATCH (p1: Person)
+WHERE p1.country = "Scotland"
+RETURN p1.name, p1.country;
+
+// 5 - Show all the person with age less or equal than 20 from Ireland
+MATCH (p1: Person)
+WHERE p1.age <= 20
+AND p1.country = "Ireland"
+RETURN p1.name, p1.country;
