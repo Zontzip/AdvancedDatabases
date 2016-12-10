@@ -41,8 +41,30 @@ CREATE
 MATCH (a: Airport) return a;
 
 // 1 - Find the total time from Moscow to Rio. Show also the path.
-MATCH path = (a1: Airport {name:"moscow"})-[:connected_to*..10]-
-(a2: Airport{name:"rio"})
+MATCH path = shortestPath((a1: Airport {name:"moscow"})-[:connected_to*..10]-
+(a2: Airport{name:"rio"}))
 RETURN path, REDUCE (tot = 0, n IN relationships(path) | tot + n.time)
 AS tottime
 ORDER BY tottime ASC;
+
+// 2 - Show all the flights from Dublin to any destination and sort them by 
+// price (from the most expensive)
+MATCH path = (a1: Airport {name:"dublin"})-[:connected_to*..1]-(a2: Airport)
+RETURN path, REDUCE (tot = 0, n IN relationships(path) | tot + n.price)
+AS totprice
+ORDER BY totprice DESC;
+
+// 3 - Show what can be reached from Chicago in one or two steps (= direct 
+// flight or 1 change only)
+MATCH path = (a1: Airport {name:"chicago"})-[:connected_to*..2]-(a2: Airport)
+RETURN path;
+
+// 4 - Show what can be reached from London in less than 240 minutes (4 hours).
+// NOTE: Couldn't find way to filter accumulator value so limited it to 7 which 
+// returns the correct values anyway
+MATCH path = (a1: Airport {name:"london"})-[:connected_to*..2]-(a2: Airport)
+RETURN path, REDUCE (tot = 0, n IN relationships(path) | tot + n.time)
+AS tottime
+ORDER BY tottime ASC
+LIMIT 7;
+
