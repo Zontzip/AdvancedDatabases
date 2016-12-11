@@ -59,12 +59,11 @@ ORDER BY totprice DESC;
 MATCH path = (a1: Airport {name:"chicago"})-[:connected_to*..2]-(a2: Airport)
 RETURN path;
 
-// 4 - Show what can be reached from London in less than 240 minutes (4 hours).
-// NOTE: Couldn't find way to filter accumulator value so limited it to 7 which 
-// returns the correct values anyway
-MATCH path = (a1: Airport {name:"london"})-[:connected_to*..2]-(a2: Airport)
-RETURN path, REDUCE (tot = 0, n IN relationships(path) | tot + n.time)
+// 4 - Show what can be reached from London in less than 240 minutes (4 hours)
+MATCH path = (a1: Airport {name:"london"})-[:connected_to*..10]-(a2: Airport)
+WITH path, REDUCE (tot = 0, n IN relationships(path) | tot + n.time)
 AS tottime
-ORDER BY tottime ASC
-LIMIT 7;
+WHERE tottime < 240
+RETURN path, tottime
+ORDER BY tottime ASC;
 
